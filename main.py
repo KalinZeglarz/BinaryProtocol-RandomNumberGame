@@ -1,5 +1,9 @@
 # Docs: https://pymotw.com/2/socket/tcp.html
 from bitset import Bitset
+from server import Server
+from client import Client
+import socket
+import sys
 
 def binarytoint(b):
     w=0
@@ -8,12 +12,13 @@ def binarytoint(b):
         w = w*2+x
     return w
 
-def User():
+def user():
     print("I'm User!")
     b = Bitset(7)
     print(b)
     print(binarytoint(b))
-def Server():
+
+def server():
     print("I'm Server!")
 
 def menu():
@@ -22,10 +27,14 @@ def menu():
     while loop == 1:
         start = input("Choose working mode (Server-1, User-2, Exit-0):")
         if start == 1:
-            Server()
+            #server()
+            serv = Server()
+            serv.start()
             loop = 0
         elif start == 2:
-            User()
+            #user()
+            cli = Client()
+            cli.start()
             loop = 0
         elif start == 0:
             loop = 0
