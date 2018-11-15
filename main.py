@@ -1,10 +1,19 @@
 # Docs: https://pymotw.com/2/socket/tcp.html
 from bitset import Bitset
 
+def binarytoint(b):
+    w=0
+    string = b
+    for x in string:
+        w = w*2+x
+    return w
+
+
 def User():
     print("I'm User!")
     b = Bitset(7)
     print(b)
+    print(binarytoint(b))
 def Server():
     print("I'm Server!")
 
