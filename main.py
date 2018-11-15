@@ -8,7 +8,6 @@ def binarytoint(b):
         w = w*2+x
     return w
 
-
 def User():
     print("I'm User!")
     b = Bitset(7)
