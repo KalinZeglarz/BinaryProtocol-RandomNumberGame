@@ -2,7 +2,7 @@ def menu():
     loop = 1
     start = 0
     while loop == 1:
-        start = input("Choose working mode (Server-1, User-2, Exit-0): ")
+        start = input("Choose working mode (Server-1, User-2, Exit-0):")
         if start == 1:
             print()
         elif start == 2:
