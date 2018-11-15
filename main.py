@@ -1,8 +1,11 @@
 # Docs: https://pymotw.com/2/socket/tcp.html
+from bitset import Bitset
+from bitarray import bitarray
 
 def User():
     print("I'm User!")
-
+    b = Bitset(7)
+    print(b)
 def Server():
     print("I'm Server!")
 
