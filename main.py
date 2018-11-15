@@ -22,6 +22,6 @@ def menu():
         elif start == 0:
             loop = 0
         else:
-            print("Wrong choose. Choose again (type 1 for \"Server\" or 2 for \"User\" or 0 for Exit)")
+            print("Wrong choice. Choose again (type 1 for \"Server\" or 2 for \"User\" or 0 for Exit)")
 
 menu()
