@@ -50,6 +50,9 @@ class Server():
         secret_number = self.randomInt()
         print(secret_number)
 
+        # Client variables
+        
+
         while True:
             # Wait for a connection
             print >> sys.stderr, 'waiting for a connection'
@@ -72,14 +75,16 @@ class Server():
                         token = self.pack_message(OPERATION.SEND_ID)
                         connection.sendall(token)
                         print('get')
-                    elif action == OPERATION.SEND_ID:
-                        print('send')
+                    if action == OPERATION.GET_ID_TRIES:
+                        #token = random.randint(1, 7)
+                        #token = self.pack_message(OPERATION.SEND_ID)
+                        #tries = message[4]
+                        print('get_tries')
                     elif action == OPERATION.TRIES:
+
                         print('tries')
                     elif action == OPERATION.GUESS:
                         print('guess')
-                    elif action == OPERATION.RESULT:
-                        print('result')
                     else:
                         print('Bad flags settings!')
 
