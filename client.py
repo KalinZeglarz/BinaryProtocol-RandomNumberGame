@@ -52,6 +52,12 @@ class Client():
             print >> sys.stderr, 'sending "%s"' % binascii.hexlify(message)
             sock.sendall(message)
 
+            #Receive response
+            data = sock.recv(12)
+            # unpacked_data = unpacker.unpack(data)
+            received = self.unpack_message(data)
+            print(received)
+
             # Look for the response
             # amount_received = 0
             # amount_expected = len(message)

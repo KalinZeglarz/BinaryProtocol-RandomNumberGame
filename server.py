@@ -43,7 +43,7 @@ class Server():
 
         # Picking a random integer
         secret_number = self.randomInt()
-        print(secret_number) 
+        print(secret_number)
 
         while True:
             # Wait for a connection
