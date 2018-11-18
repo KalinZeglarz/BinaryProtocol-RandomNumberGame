@@ -50,11 +50,8 @@ class Server():
         secret_number = self.randomInt()
         print("Random secret number: " + str(secret_number))
 
-        tries = 0
-
         # Client variables
-        new_tries = 0
-        client = []
+        tries = 0
         clients = []
 
         while True:
@@ -81,7 +78,7 @@ class Server():
                     if action == OPERATION.GET_ID:
                         token = random.randint(1,7)
                         for x in clients:
-                            while token == client[0]:
+                            while token == x[0]:
                                 token = random.randint(1, 7)
                         client = [token]
                         clients += [client]
@@ -92,22 +89,23 @@ class Server():
                     elif action == OPERATION.GET_ID_TRIES:
                         token = random.randint(1, 7)
                         for x in clients:
-                            while token == client[0]:
+                            while token == x[0]:
                                 token = random.randint(1, 7)
 
                         if clients[0]:
-                            new_tries = (clients[0][1] + clients[1][1]) / 2
-                            clients[0][1] = new_tries
-                            clients[1][1] = new_tries
-                            message = self.pack_message(OPERATION.SEND_ID_TRIES, new_tries, token)
+                            tries = (clients[0][1] + clients[1][1]) / 2
+                            clients[0][1] = tries
+                            clients[1][1] = tries
+                            message = self.pack_message(OPERATION.SEND_ID_TRIES, tries, token)
+                        connection.sendall(message)
                         print('get_tries')
 
                     elif action == OPERATION.TRIES:
-                        if clients[1]:
-                            new_tries = (clients[0][1] + clients[1][1]) / 2
-                            clients[0][1] = new_tries
-                            clients[1][1] = new_tries
-                            message = self.pack_message(OPERATION.TRIES, new_tries, token)
+                        for x in clients:
+                            if x[0] == token:
+                                tries = x[1]
+                        message = self.pack_message(OPERATION.TRIES, tries, token)
+                        connection.sendall(message)
                         print('tries')
 
                     elif action == OPERATION.GUESS:
