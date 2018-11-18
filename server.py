@@ -68,6 +68,9 @@ class Server():
                     print('received: ' ,message)
                     action = message[0]
                     if action == OPERATION.GET_ID:
+                        token = random.randint(1,7)
+                        token = self.pack_message(OPERATION.SEND_ID)
+                        connection.sendall(token)
                         print()
                     elif action == OPERATION.SEND_ID:
                         print()
