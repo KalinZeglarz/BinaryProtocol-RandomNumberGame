@@ -1,11 +1,9 @@
-from bitset import Bitset
-from functions import *
-from operation import OPERATION
 import struct
 import socket
 import sys
 import binascii
-from bitstring import BitArray
+from functions import *
+from operation import OPERATION
 
 class Client():
     def __init__(self):
@@ -31,6 +29,15 @@ class Client():
 
         return packed_data
 
+    #For unpacking massages from Binary to Frame structure
+    def unpack_message(self, data):
+        unpacker = struct.Struct('5? 4? 3?')
+        unpacked_data = unpacker.unpack(data)
+        OP = OPERATION(boolArrTOint(unpacked_data[:5]))
+        AN = boolArrTOint(unpacked_data[5:9])
+        ID = boolArrTOint(unpacked_data[9:])
+        return [OP,AN,ID]
+
 
     def start(self):
         print("Client is starting!")
@@ -53,10 +60,10 @@ class Client():
             sock.sendall(message)
 
             #Receive response
-            data = sock.recv(12)
+            #data = sock.recv(12)
             # unpacked_data = unpacker.unpack(data)
-            received = self.unpack_message(data)
-            print(received)
+            #received = self.unpack_message(data)
+            #print(received)
 
             # Look for the response
             # amount_received = 0

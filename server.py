@@ -1,10 +1,8 @@
 import struct
 import random
-from bitset import Bitset
-from struct import *
 import socket
 import sys
-import binascii
+#import binascii
 from functions import *
 from operation import OPERATION
 
@@ -13,6 +11,16 @@ class Server():
     def __init__(self):
         pass
         print("Initialize Server Protocol!")
+
+    # Packing Frame data to Binary
+    def pack_message(self,OP,AN,ID):
+        operation = OPERATION(OP)
+
+        packer = struct.Struct('5? 4? 3?')
+        message = intTOboolArr(operation.value, '05b') + intTOboolArr(AN, '04b') + intTOboolArr(ID, '03b')
+        packed_data = packer.pack(*message)
+
+        return packed_data
 
     #For unpacking massages from Binary to Frame structure
     def unpack_message(self, data):
@@ -25,9 +33,6 @@ class Server():
 
     def start(self):
         print("Server is starting!")
-
-
-
 
         # Create a TCP/IP socket
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -61,15 +66,18 @@ class Server():
                     print(message)
 
                     print('received: ' ,message)
-                    if data:
-                        print >> sys.stderr, 'sending data back to the client'
-                        if(message == secret_number):
-                            data = 'You won!'
-                        else:
-                            data = 'Wrong choice! Try again!'
-                        connection.sendall(data)
-                    else:
-                        print >> sys.stderr, 'no more data from', client_address
+                    action = message[0]
+                    if action == OPERATION.GET_ID:
+                        print()
+                    elif action == OPERATION.SEND_ID:
+                        print()
+                    elif action == OPERATION.TRIES:
+                        print()
+                    elif action == OPERATION.GUESS:
+                        print()
+                    elif action == OPERATION.RESULT:
+                        print()
+
                     break
 
             finally:
