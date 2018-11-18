@@ -48,7 +48,9 @@ class Server():
 
         # Picking a random integer
         secret_number = self.randomInt()
-        print(secret_number)
+        print("Random secret number: " + str(secret_number))
+
+        tries = 0
 
         # Client variables
         new_tries = 0
@@ -68,10 +70,13 @@ class Server():
                     data = connection.recv(12)
                     #unpacked_data = unpacker.unpack(data)
                     message = self.unpack_message(data)
-                    print(message)
+                    #print(message)
+
 
                     print('received: ' ,message)
                     action = message[0]
+                    answer = message[1]
+                    token = message[2]
 
                     if action == OPERATION.GET_ID:
                         token = random.randint(1,7)
@@ -98,6 +103,11 @@ class Server():
                         print('get_tries')
 
                     elif action == OPERATION.TRIES:
+                        if clients[1]:
+                            new_tries = (clients[0][1] + clients[1][1]) / 2
+                            clients[0][1] = new_tries
+                            clients[1][1] = new_tries
+                            message = self.pack_message(OPERATION.TRIES, new_tries, token)
                         print('tries')
 
                     elif action == OPERATION.GUESS:

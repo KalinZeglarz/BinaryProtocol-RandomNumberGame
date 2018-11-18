@@ -49,23 +49,27 @@ class Client():
         server_address = ('localhost', 10000)
         print >> sys.stderr, 'connecting to %s port %s' % server_address
         sock.connect(server_address)
-        print(struct.Struct('5? 4? 3?').size)
+        #print(struct.Struct('5? 4? 3?').size)
+
+        #Zmienne Clienta
+        ID=0
 
         try:
             #Packing Data to Binary
-            message = input ('Try to guess the number. Pick one from 0 to 15:')
-            message = self.pack_message(OPERATION.GET_ID, 2, 3)
+            number = input ('Try to guess the number. Pick one from 0 to 15:')
+            message = self.pack_message(OPERATION.GET_ID_TRIES, number, ID)
 
-            print >> sys.stderr, 'sending "%s"' % binascii.hexlify(message)
+            #print >> sys.stderr, 'sending "%s"' % binascii.hexlify(message)
             sock.sendall(message)
 
-            #Receive response
-            #data = sock.recv(12)
-            # unpacked_data = unpacker.unpack(data)
-            #received = self.unpack_message(data)
+            #Receive response with ID OR ID&TRIES
+            data = sock.recv(12)
+            received = self.unpack_message(data)
             #print(received)
 
-            # Look for the response
+
+
+            #Look for the response
             # amount_received = 0
             # amount_expected = len(message)
             #
