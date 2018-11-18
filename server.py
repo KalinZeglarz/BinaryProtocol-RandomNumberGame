@@ -1,4 +1,5 @@
 import struct
+import random
 from bitset import Bitset
 from struct import *
 import socket
@@ -24,6 +25,10 @@ class Server():
 
     def start(self):
         print("Server is starting!")
+
+        # Picking a random integer
+        secret_number = self.randomInt()
+
 
         # Create a TCP/IP socket
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -62,3 +67,6 @@ class Server():
             finally:
                 # Clean up the connection
                 connection.close()
+    def randomInt(self):
+        number = random.randint(0,15)
+        return number
