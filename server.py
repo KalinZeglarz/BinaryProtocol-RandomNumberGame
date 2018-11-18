@@ -71,15 +71,17 @@ class Server():
                         token = random.randint(1,7)
                         token = self.pack_message(OPERATION.SEND_ID)
                         connection.sendall(token)
-                        print()
+                        print('get')
                     elif action == OPERATION.SEND_ID:
-                        print()
+                        print('send')
                     elif action == OPERATION.TRIES:
-                        print()
+                        print('tries')
                     elif action == OPERATION.GUESS:
-                        print()
+                        print('guess')
                     elif action == OPERATION.RESULT:
-                        print()
+                        print('result')
+                    else:
+                        print('Bad flags settings!')
 
                     break
 
