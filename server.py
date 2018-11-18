@@ -43,7 +43,8 @@ class Server():
 
         # Picking a random integer
         secret_number = self.randomInt()
-        
+        print(secret_number) 
+
         while True:
             # Wait for a connection
             print >> sys.stderr, 'waiting for a connection'
@@ -62,6 +63,10 @@ class Server():
                     print('received: ' ,message)
                     if data:
                         print >> sys.stderr, 'sending data back to the client'
+                        if(message == secret_number):
+                            data = 'You won!'
+                        else:
+                            data = 'Wrong choice! Try again!'
                         connection.sendall(data)
                     else:
                         print >> sys.stderr, 'no more data from', client_address
