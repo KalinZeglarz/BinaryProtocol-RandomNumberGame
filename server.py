@@ -109,6 +109,16 @@ class Server():
                         print('tries')
 
                     elif action == OPERATION.GUESS:
+                        for client in clients:
+                            if client[0] == token:
+                                if answer == secret_number:
+                                    client[2] = True
+                                    message = self.pack_message(OPERATION.RESULT, 0, token)
+                                    connection.sendall(message)
+                                else:
+                                    client[1] -= 1
+                                    message = self.pack_message(OPERATION.TRIES, client[1], token)
+                                    connection.sendall(message)
                         print('guess')
 
                     else:
