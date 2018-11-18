@@ -46,6 +46,7 @@ class Client():
 
         try:
             #Packing Data to Binary
+            message = input ('Try to guess the number. Pick one from 0 to 15:')
             message = self.pack_message(OPERATION.GET_ID, 2, 3)
 
             print >> sys.stderr, 'sending "%s"' % binascii.hexlify(message)
