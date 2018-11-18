@@ -13,6 +13,7 @@ class Server():
         pass
         print("Initialize Server Protocol!")
 
+    #For unpacking massages from Binary to Frame structure
     def unpack_message(self, data):
         unpacker = struct.Struct('5? 4? 3?')
         unpacked_data = unpacker.unpack(data)
@@ -42,10 +43,8 @@ class Server():
 
             try:
                 print >> sys.stderr, 'connection from', client_address
-                unpacker = struct.Struct('5? 4? 3?')
 
                 # Receive the data in small chunks and retransmit it
-
                 while True:
                     data = connection.recv(12)
                     #unpacked_data = unpacker.unpack(data)

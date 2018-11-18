@@ -27,7 +27,6 @@ class Client():
 
         packer = struct.Struct('5? 4? 3?')
         message = intTOboolArr(operation.value, '05b') + intTOboolArr(AN, '04b') + intTOboolArr(ID, '03b')
-        #print(message)
         packed_data = packer.pack(*message)
 
         return packed_data
