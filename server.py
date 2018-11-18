@@ -26,8 +26,7 @@ class Server():
     def start(self):
         print("Server is starting!")
 
-        # Picking a random integer
-        secret_number = self.randomInt()
+
 
 
         # Create a TCP/IP socket
@@ -39,8 +38,12 @@ class Server():
         sock.bind(server_address)
 
         # Listen for incoming connections
+
         sock.listen(1)
 
+        # Picking a random integer
+        secret_number = self.randomInt()
+        
         while True:
             # Wait for a connection
             print >> sys.stderr, 'waiting for a connection'
@@ -67,6 +70,7 @@ class Server():
             finally:
                 # Clean up the connection
                 connection.close()
+
     def randomInt(self):
         number = random.randint(0,15)
         return number
