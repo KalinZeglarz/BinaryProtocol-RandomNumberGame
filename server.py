@@ -76,6 +76,7 @@ class Server():
                     token = message[2]
 
                     if action == OPERATION.GET_ID:
+                        print('GET_ID from ' + client_address)
                         token = random.randint(1,7)
                         for x in clients:
                             while token == x[0]:
@@ -84,9 +85,10 @@ class Server():
                         clients += [client]
                         message = self.pack_message(OPERATION.SEND_ID, 0, token)
                         connection.sendall(message)
-                        print('get')
+                        print('GET_ID responsed to' + client_address)
 
                     elif action == OPERATION.GET_ID_TRIES:
+                        print('GET_ID & TRIES from ' + client_address)
                         token = random.randint(1, 7)
                         for x in clients:
                             while token == x[0]:
@@ -98,28 +100,32 @@ class Server():
                             clients[1][1] = tries
                             message = self.pack_message(OPERATION.SEND_ID_TRIES, tries, token)
                         connection.sendall(message)
-                        print('get_tries')
+                        print('GET_ID & TRIES responsed to ' + client_address)
 
                     elif action == OPERATION.TRIES:
+                        print('TRIES from ' + client_address)
                         for x in clients:
                             if x[0] == token:
                                 tries = x[1]
                         message = self.pack_message(OPERATION.TRIES, tries, token)
                         connection.sendall(message)
-                        print('tries')
+                        print('TRIES responsed to ' + client_address)
 
                     elif action == OPERATION.GUESS:
+                        print(client_address + " is GUESSing " + answer)
                         for client in clients:
                             if client[0] == token:
                                 if answer == secret_number:
                                     client[2] = True
                                     message = self.pack_message(OPERATION.RESULT, 0, token)
                                     connection.sendall(message)
+                                    print("RESULT send as it is GOOD answear to " + client_address)
                                 else:
                                     client[1] -= 1
                                     message = self.pack_message(OPERATION.TRIES, client[1], token)
                                     connection.sendall(message)
-                        print('guess')
+                                    print("TRIES send as it is BAD answear to " + client_address)
+
 
                     else:
                         print('Bad flags settings!')
