@@ -51,6 +51,7 @@ class Server():
         print(secret_number)
 
         # Client variables
+        new_tries = 0
         client = []
         clients = []
 
@@ -71,6 +72,7 @@ class Server():
 
                     print('received: ' ,message)
                     action = message[0]
+
                     if action == OPERATION.GET_ID:
                         token = random.randint(1,7)
                         for x in clients:
@@ -78,29 +80,29 @@ class Server():
                                 token = random.randint(1, 7)
                         client = [token]
                         clients += [client]
-                        message = self.pack_message(OPERATION.SEND_ID, token)
+                        message = self.pack_message(OPERATION.SEND_ID, 0, token)
                         connection.sendall(message)
                         print('get')
-                    if action == OPERATION.GET_ID_TRIES:
+
+                    elif action == OPERATION.GET_ID_TRIES:
                         token = random.randint(1, 7)
                         for x in clients:
                             while token == client[0]:
                                 token = random.randint(1, 7)
-                        if clients[1]:
+
+                        if clients[0]:
                             new_tries = (clients[0][1] + clients[1][1]) / 2
                             clients[0][1] = new_tries
                             clients[1][1] = new_tries
-                            message = self.pack_message(OPERATION.SEND_ID_TRIES, token, new_tries)
+                            message = self.pack_message(OPERATION.SEND_ID_TRIES, new_tries, token)
                         print('get_tries')
+
                     elif action == OPERATION.TRIES:
-                        if clients[1]:
-                            new_tries = (clients[0][1] + clients[1][1]) / 2
-                            clients[0][1] = new_tries
-                            clients[1][1] = new_tries
-                            message = self.pack_message(OPERATION.TRIES, new_tries)
                         print('tries')
+
                     elif action == OPERATION.GUESS:
                         print('guess')
+
                     else:
                         print('Bad flags settings!')
 
