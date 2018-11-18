@@ -62,12 +62,32 @@ class Client():
             #print >> sys.stderr, 'sending "%s"' % binascii.hexlify(message)
             sock.sendall(message)
 
-            #Receive response with ID OR ID&TRIES
-            data = sock.recv(12)
-            received = self.unpack_message(data)
-            #print(received)
+            while True:
+                #Receive response with ID OR ID&TRIES
+                data = sock.recv(12)
+                received = self.unpack_message(data)
+                #print(received)
 
+                action = received[0]
+                answer = received[1]
+                token = received[2]
 
+                if action == OPERATION.SEND_ID:
+                    print('send')
+
+                elif action == OPERATION.SEND_ID_TRIES:
+                    print('send_tries')
+
+                elif action == OPERATION.TRIES:
+                    print('tries')
+
+                elif action == OPERATION.RESULT:
+                    print('result')
+
+                else:
+                    print('Bad flags settings!')
+
+                break
 
             #Look for the response
             # amount_received = 0
