@@ -10,7 +10,7 @@ from operation import OPERATION
 class Server():
     def __init__(self):
         pass
-        print("Initialize Server Protocol!")
+        print("Initialize Server Program!")
 
     # Packing Frame data to Binary
     def pack_message(self,OP,AN,ID):
@@ -39,7 +39,7 @@ class Server():
 
         # Bind the socket to the port
         server_address = ('localhost', 10000)
-        print >> sys.stderr, 'starting up on %s port %s' % server_address
+        print >> sys.stderr, 'Starting up on %s port %s' % server_address
         sock.bind(server_address)
 
         # Listen for incoming connections
@@ -56,11 +56,11 @@ class Server():
 
         while True:
             # Wait for a connection
-            print >> sys.stderr, 'waiting for a connection'
+            print >> sys.stderr, 'Waiting for a connection'
             connection, client_address = sock.accept()
 
             try:
-                print >> sys.stderr, 'connection from', client_address
+                print >> sys.stderr, 'Connection from', client_address
 
                 # Receive the data in small chunks and retransmit it
                 while True:
@@ -69,14 +69,13 @@ class Server():
                     message = self.unpack_message(data)
                     #print(message)
 
-
-                    print('received: ' ,message)
+                    print 'Received: ' + str(message)
                     action = message[0]
                     answer = message[1]
                     token = message[2]
 
                     if action == OPERATION.GET_ID:
-                        print('GET_ID from ' + client_address)
+                        print 'GET_ID from ' + str(client_address)
                         token = random.randint(1,7)
                         for x in clients:
                             while token == x[0]:
@@ -85,51 +84,57 @@ class Server():
                         clients += [client]
                         message = self.pack_message(OPERATION.SEND_ID, 0, token)
                         connection.sendall(message)
-                        print('GET_ID responsed to' + client_address)
+                        print 'GET_ID responsed to' + str(client_address)
 
                     elif action == OPERATION.GET_ID_TRIES:
-                        print('GET_ID & TRIES from ' + client_address)
+                        print 'GET_ID & TRIES from ' + str(client_address)
                         token = random.randint(1, 7)
                         for x in clients:
                             while token == x[0]:
                                 token = random.randint(1, 7)
-                        if clients[0]:
+                        clients += [[token, answer]]
+
+                        print 'ID:' + str(token) + ' GRANTED FOR ' + str(client_address)
+
+                        if len(clients)>1:
                             tries = (clients[0][1] + clients[1][1]) / 2
                             clients[0][1] = tries
                             clients[1][1] = tries
                             message = self.pack_message(OPERATION.SEND_ID_TRIES, tries, token)
-                        client = [token, tries]
-                        clients += [client]
-                        connection.sendall(message)
-                        print('GET_ID & TRIES responsed to ' + client_address)
+                            connection.sendall(message)
+                            print 'GET_ID & TRIES responsed to ' + str(client_address)
+                        else:
+                            message = self.pack_message(OPERATION.SEND_ID_TRIES, 0, token)
+                            connection.sendall(message)
+                            print 'GET_ID responsed to ' + str(client_address) + '. TRIES not send (Waiting for second player)!'
 
                     elif action == OPERATION.TRIES:
-                        print('TRIES from ' + client_address)
+                        print 'TRIES from ' + str(client_address)
                         for x in clients:
                             if x[0] == token:
                                 tries = x[1]
                         message = self.pack_message(OPERATION.TRIES, tries, token)
                         connection.sendall(message)
-                        print('TRIES responsed to ' + client_address)
+                        print 'TRIES responsed to ' + str(client_address)
 
                     elif action == OPERATION.GUESS:
-                        print(client_address + " is GUESSing " + answer)
+                        print str(client_address) + " is GUESSing " + answer
                         for client in clients:
                             if client[0] == token:
                                 if answer == secret_number:
                                     client[2] = True
                                     message = self.pack_message(OPERATION.RESULT, 0, token)
                                     connection.sendall(message)
-                                    print("RESULT send as it is GOOD answear to " + client_address)
+                                    print "RESULT send as it is GOOD answear to " + str(client_address)
                                 else:
                                     client[1] -= 1
                                     message = self.pack_message(OPERATION.TRIES, client[1], token)
                                     connection.sendall(message)
-                                    print("TRIES send as it is BAD answear to " + client_address)
+                                    print "TRIES send as it is BAD answear to " + str(client_address)
 
 
                     else:
-                        print('Bad flags settings!')
+                        print('Error: Bad flags settings!')
 
                     break
 
