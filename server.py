@@ -93,12 +93,13 @@ class Server():
                         for x in clients:
                             while token == x[0]:
                                 token = random.randint(1, 7)
-
                         if clients[0]:
                             tries = (clients[0][1] + clients[1][1]) / 2
                             clients[0][1] = tries
                             clients[1][1] = tries
                             message = self.pack_message(OPERATION.SEND_ID_TRIES, tries, token)
+                        client = [token, tries]
+                        clients += [client]
                         connection.sendall(message)
                         print('GET_ID & TRIES responsed to ' + client_address)
 
