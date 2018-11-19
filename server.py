@@ -84,7 +84,7 @@ class Server():
                         clients += [client]
                         message = self.pack_message(OPERATION.SEND_ID, 0, token)
                         connection.sendall(message)
-                        print 'GET_ID responsed to' + str(client_address)
+                        print 'Responded with SEND_ID to' + str(client_address)
 
                     elif action == OPERATION.GET_ID_TRIES:
                         print 'GET_ID & TRIES from ' + str(client_address)
@@ -102,11 +102,11 @@ class Server():
                             clients[1][1] = tries
                             message = self.pack_message(OPERATION.SEND_ID_TRIES, tries, token)
                             connection.sendall(message)
-                            print 'GET_ID & TRIES responsed to ' + str(client_address)
+                            print 'Responded with SEND_ID & TRIES to ' + str(client_address)
                         else:
-                            message = self.pack_message(OPERATION.SEND_ID_TRIES, 0, token)
+                            message = self.pack_message(OPERATION.SEND_ID, 0, token)
                             connection.sendall(message)
-                            print 'GET_ID responsed to ' + str(client_address) + '. TRIES not send (Waiting for second player)!'
+                            print 'Responded with SEND_ID to ' + str(client_address) + '. TRIES not send (Waiting for second player)!'
 
                     elif action == OPERATION.TRIES:
                         print 'TRIES from ' + str(client_address)
@@ -115,7 +115,7 @@ class Server():
                                 tries = x[1]
                         message = self.pack_message(OPERATION.TRIES, tries, token)
                         connection.sendall(message)
-                        print 'TRIES responsed to ' + str(client_address)
+                        print 'Responded with TRIES to ' + str(client_address)
 
                     elif action == OPERATION.GUESS:
                         print str(client_address) + " is GUESSing " + answer
@@ -125,12 +125,12 @@ class Server():
                                     client[2] = True
                                     message = self.pack_message(OPERATION.RESULT, 0, token)
                                     connection.sendall(message)
-                                    print "RESULT send as it is GOOD answear to " + str(client_address)
+                                    print "RESULT send as it is GOOD answer to " + str(client_address)
                                 else:
                                     client[1] -= 1
                                     message = self.pack_message(OPERATION.TRIES, client[1], token)
                                     connection.sendall(message)
-                                    print "TRIES send as it is BAD answear to " + str(client_address)
+                                    print "TRIES send as it is BAD answer to " + str(client_address)
 
 
                     else:

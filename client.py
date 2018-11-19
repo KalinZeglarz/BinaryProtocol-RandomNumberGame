@@ -40,7 +40,7 @@ class Client():
 
 
     def start(self):
-        print("Client is starting!")
+        print "Client is starting!"
 
         # Create a TCP/IP socket
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -53,12 +53,12 @@ class Client():
 
         #Zmienne Clienta
         ID=0
+        TRIES=0
 
         try:
             #Packing Data to Binary
             number = input ('Try to guess the number. Pick one from 0 to 15:')
             message = self.pack_message(OPERATION.GET_ID_TRIES, number, ID)
-
             #print >> sys.stderr, 'sending "%s"' % binascii.hexlify(message)
             sock.sendall(message)
 
@@ -73,6 +73,8 @@ class Client():
                 token = received[2]
 
                 if action == OPERATION.SEND_ID:
+                    ID = token
+                    TRIES = answer
                     print('send')
 
                 elif action == OPERATION.SEND_ID_TRIES:
