@@ -3,6 +3,9 @@ import random
 import socket
 import sys
 #import binascii
+import thread
+import time
+
 from functions import *
 from operation import OPERATION
 
@@ -31,43 +34,21 @@ class Server():
         ID = boolArrTOint(unpacked_data[9:])
         return [OP,AN,ID]
 
-    def start(self):
-        print("Server is starting!")
+    def newClient(self, connection, client_address, port, clients, secret_number, tries, client_nr):
+        print "New Client: thread created"
 
-        # Create a TCP/IP socket
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            print 'Connection from', client_address, ":", port
 
-        # Bind the socket to the port
-        server_address = ('localhost', 10000)
-        print >> sys.stderr, 'Starting up on %s port %s' % server_address
-        sock.bind(server_address)
+            # Receive the data in small chunks and retransmit it
+            while True:
+                data = connection.recv(12)
+                # unpacked_data = unpacker.unpack(data)
+                #print "Data len:",len(data)
 
-        # Listen for incoming connections
-
-        sock.listen(1)
-
-        # Picking a random integer
-        secret_number = self.randomInt()
-        print("Random secret number: " + str(secret_number))
-
-        # Client variables
-        tries = 0
-        clients = []
-
-        while True:
-            # Wait for a connection
-            print >> sys.stderr, 'Waiting for a connection'
-            connection, client_address = sock.accept()
-
-            try:
-                print >> sys.stderr, 'Connection from', client_address
-
-                # Receive the data in small chunks and retransmit it
-                while True:
-                    data = connection.recv(12)
-                    #unpacked_data = unpacker.unpack(data)
+                if len(data) != 0:
                     message = self.unpack_message(data)
-                    #print(message)
+                    # print(message)
 
                     print 'Received: ' + str(message)
                     action = message[0]
@@ -76,7 +57,7 @@ class Server():
 
                     if action == OPERATION.GET_ID:
                         print 'GET_ID from ' + str(client_address)
-                        token = random.randint(1,7)
+                        token = random.randint(1, 7)
                         for x in clients:
                             while token == x[0]:
                                 token = random.randint(1, 7)
@@ -96,7 +77,7 @@ class Server():
 
                         print 'ID:' + str(token) + ' GRANTED FOR ' + str(client_address)
 
-                        if len(clients)>1:
+                        if len(clients) > 1:
                             tries = (clients[0][1] + clients[1][1]) / 2
                             clients[0][1] = tries
                             clients[1][1] = tries
@@ -106,16 +87,36 @@ class Server():
                         else:
                             message = self.pack_message(OPERATION.SEND_ID, 0, token)
                             connection.sendall(message)
-                            print 'Responded with SEND_ID to ' + str(client_address) + '. TRIES not send (Waiting for second player)!'
+                            print 'Responded with SEND_ID to ' + str(
+                                client_address) + '. TRIES not send (Waiting for second player)!'
+
+                        # while True:
+                        #     if len(clients) < 1:
+                        #         time.sleep(1)
+                        #     else:
+                        #         message = self.pack_message(OPERATION.TRIES, tries, token)
+                        #         connection.sendall(message)
 
                     elif action == OPERATION.TRIES:
-                        print 'TRIES from ' + str(client_address)
-                        for x in clients:
-                            if x[0] == token:
-                                tries = x[1]
-                        message = self.pack_message(OPERATION.TRIES, tries, token)
-                        connection.sendall(message)
-                        print 'Responded with TRIES to ' + str(client_address)
+                        print 'TRIES from ' + str(client_address), ":", port
+                        if answer == 0:
+                            client_tries = 0 #moze powodowac error, ale na razie jest potrzebne
+                            for x in clients:
+                                if x[0] == token:
+                                    client_tries = x[1]
+                            message = self.pack_message(OPERATION.TRIES, client_tries, token)
+                            connection.sendall(message)
+                        elif answer == 1:
+                            #print str(clients)
+                            if len(clients) < 2:
+                                message = self.pack_message(OPERATION.TRIES, 0, token)
+                                connection.sendall(message)
+                            else:
+                                tries2 = (clients[0][1] + clients[1][1]) / 2
+                                message = self.pack_message(OPERATION.TRIES, tries2, token)
+                                connection.sendall(message)
+                        print 'Responded with TRIES to ' + str(client_address), ":", port
+
 
                     elif action == OPERATION.GUESS:
                         print str(client_address) + " is GUESSing " + answer
@@ -132,15 +133,45 @@ class Server():
                                     connection.sendall(message)
                                     print "TRIES send as it is BAD answer to " + str(client_address)
 
-
                     else:
                         print('Error: Bad flags settings!')
 
-                    break
+                    #break
 
-            finally:
-                # Clean up the connection
-                connection.close()
+        finally:
+            # Clean up the connection
+            connection.close()
+
+    def start(self):
+        print("Server is starting!")
+
+        # Create a TCP/IP socket
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+        # Bind the socket to the port
+        server_address = ('localhost', 10000)
+        print >> sys.stderr, 'Starting up on %s port %s' % server_address
+        sock.bind(server_address)
+
+        # Listen for incoming connections
+
+        sock.listen(2)
+
+        # Picking a random integer
+        secret_number = self.randomInt()
+        print("Random secret number: " + str(secret_number))
+
+        # Client variables
+        tries = 0
+        clients = []
+        client_nr = 1
+
+        while True:
+            # Wait for a connection
+            print >> sys.stderr, 'Waiting for a connection'
+            connection, (client_address, port) = sock.accept()
+            thread.start_new_thread(self.newClient, (connection, client_address, port, clients, secret_number, tries, client_nr))
+            client_nr+=1
 
     def randomInt(self):
         number = random.randint(0,15)

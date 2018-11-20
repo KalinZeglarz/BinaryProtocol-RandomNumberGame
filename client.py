@@ -1,6 +1,7 @@
 import struct
 import socket
 import sys
+import time
 import binascii
 from functions import *
 from operation import OPERATION
@@ -75,10 +76,31 @@ class Client():
                 if action == OPERATION.SEND_ID:
                     ID = token
                     TRIES = answer
-                    print('send')
+                    print('send' + str(received))
+                    print "Waiting for second player to join and input number of tries!"
+
+                    # time.sleep(10)
+                    # message = self.pack_message(OPERATION.TRIES, 0, ID)
+                    # sock.sendall(message)
+                    # data  = sock.recv(12)
+                    # if len(data) == 12:
+                    #     received = self.unpack_message(data)
+                        #if received[0] == OPERATION.TRIES: #and received[1] !=0:
+                        #print "Tries: " + str(received)
+
+                    while True:
+                        time.sleep(2)
+                        message = self.pack_message(OPERATION.TRIES, 1, ID) #TRIES z AN ustawionym na 1 pyta o to czy drugi gracz wpisal juz swoja liczbe do wylosowania
+                        sock.sendall(message)
+                        data  = sock.recv(12)
+                        received = self.unpack_message(data)
+                        print "Tries: " + str(received)
+                        if received[0] == OPERATION.TRIES and received[1] !=0:
+                            break
+
 
                 elif action == OPERATION.SEND_ID_TRIES:
-                    print('send_tries')
+                    print('send_tries' + str(received))
 
                 elif action == OPERATION.TRIES:
                     print('tries')
