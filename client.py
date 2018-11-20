@@ -58,7 +58,16 @@ class Client():
 
         try:
             #Packing Data to Binary
-            number = input ('Try to guess the number. Pick one from 0 to 15:')
+            error = False
+            number = 16
+            while number < 0 or number > 15:
+                if error:
+                    number = input("Wrong number! Chose form 0 to 15: ")
+                else:
+                    number = input('Pick one number from 0 to 15 as the number of tries:')
+                    if number < 0 or number > 15:
+                        error = True
+
             message = self.pack_message(OPERATION.GET_ID_TRIES, number, ID)
             #print >> sys.stderr, 'sending "%s"' % binascii.hexlify(message)
             sock.sendall(message)
@@ -98,18 +107,26 @@ class Client():
                         if received[0] == OPERATION.TRIES and received[1] !=0:
                             break
 
+                error = False
+                number = 16
+                while number <0 or number > 15:
+                    if error:
+                        number = input ("Wrong number! Chose form 0 to 15: ")
+                    else:
+                        number = input('Try to guess the number. Pick one from 0 to 15:')
+                        if number <0 or number > 15 :
+                            error = True
+                message = self.pack_message(OPERATION.GUESS, number, ID)
+                sock.sendall(message)
 
-                elif action == OPERATION.SEND_ID_TRIES:
-                    print('send_tries' + str(received))
-
-                elif action == OPERATION.TRIES:
-                    print('tries')
-
-                elif action == OPERATION.RESULT:
-                    print('result')
-
-                else:
-                    print('Bad flags settings!')
+                # elif action == OPERATION.TRIES:
+                #     print('tries')
+                #
+                # elif action == OPERATION.RESULT:
+                #     print('result')
+                #
+                # else:
+                #     print('Bad flags settings!')
 
                 break
 

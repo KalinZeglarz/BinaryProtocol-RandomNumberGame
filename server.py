@@ -119,7 +119,7 @@ class Server():
 
 
                     elif action == OPERATION.GUESS:
-                        print str(client_address) + " is GUESSing " + answer
+                        print str(client_address) + " is GUESSing " + str(answer)
                         for client in clients:
                             if client[0] == token:
                                 if answer == secret_number:
