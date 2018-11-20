@@ -103,30 +103,44 @@ class Client():
                         sock.sendall(message)
                         data  = sock.recv(12)
                         received = self.unpack_message(data)
-                        print "Tries: " + str(received)
+                        print "Tries log: " + str(received)
                         if received[0] == OPERATION.TRIES and received[1] !=0:
                             break
 
-                error = False
-                number = 16
-                while number <0 or number > 15:
-                    if error:
-                        number = input ("Wrong number! Chose form 0 to 15: ")
-                    else:
-                        number = input('Try to guess the number. Pick one from 0 to 15:')
-                        if number <0 or number > 15 :
-                            error = True
-                message = self.pack_message(OPERATION.GUESS, number, ID)
-                sock.sendall(message)
+                game = True
+                while game:
 
-                # elif action == OPERATION.TRIES:
-                #     print('tries')
-                #
-                # elif action == OPERATION.RESULT:
-                #     print('result')
-                #
-                # else:
-                #     print('Bad flags settings!')
+                    #Winning
+                    if received[0] == OPERATION.RESULT:
+                        print "Congratulations! You have won!"
+                        game = False
+
+                    #Losing
+                    elif received[0] == OPERATION.TRIES and received[1] == 0:
+                        print "Game over! You used all of your tries!"
+                        game = False
+
+                    #Game in progress
+                    else:
+                        error = False
+                        number = 16
+                        while number <0 or number > 15:
+                            if error:
+                                number = input ("Wrong number! Chose from 0 to 15: ")
+                            else:
+                                number = input('Try to guess the number. Pick one from 0 to 15:')
+                                if number <0 or number > 15 :
+                                    error = True
+
+                        #Sending pick
+                        message = self.pack_message(OPERATION.GUESS, number, ID)
+                        sock.sendall(message)
+
+                    #Receiving picking result
+                    data = sock.recv(12)
+                    received = self.unpack_message(data)
+                    #print "Tries left: " + str(received)
+                    print "Tries left: " + str(received[2])
 
                 break
 
