@@ -53,7 +53,7 @@ class Client():
         #print(struct.Struct('5? 4? 3?').size)
 
         #Zmienne Clienta
-        ID=0
+        client_token = 0
         TRIES=0
 
         try:
@@ -68,7 +68,7 @@ class Client():
                     if number < 0 or number > 15:
                         error = True
 
-            message = self.pack_message(OPERATION.GET_ID_TRIES, number, ID)
+            message = self.pack_message(OPERATION.GET_ID_TRIES, number, client_token)
             #print >> sys.stderr, 'sending "%s"' % binascii.hexlify(message)
             sock.sendall(message)
 
@@ -83,7 +83,7 @@ class Client():
                 token = received[2]
 
                 if action == OPERATION.SEND_ID:
-                    ID = token
+                    client_token = token
                     TRIES = answer
                     print('send' + str(received))
                     print "Waiting for second player to join and input number of tries!"
@@ -99,50 +99,52 @@ class Client():
 
                     while True:
                         time.sleep(2)
-                        message = self.pack_message(OPERATION.TRIES, 1, ID) #TRIES z AN ustawionym na 1 pyta o to czy drugi gracz wpisal juz swoja liczbe do wylosowania
+                        message = self.pack_message(OPERATION.TRIES, 1, client_token) #TRIES z AN ustawionym na 1 pyta o to czy drugi gracz wpisal juz swoja liczbe do wylosowania
                         sock.sendall(message)
                         data  = sock.recv(12)
                         received = self.unpack_message(data)
                         print "Tries log: " + str(received)
-                        if received[0] == OPERATION.TRIES and received[1] !=0:
+                        action = received[0]
+                        answer = received[1]
+                        if action == OPERATION.TRIES and answer !=0:
                             break
 
-                game = True
-                while game:
+                #Winning
+                if action == OPERATION.RESULT and answer == 1:
+                    print "Congratulations! You have won!"
+                    break
+                #Losing
+                if action == OPERATION.TRIES and answer == 0:
+                    print "Game over! You used all of your tries!"
+                    break
 
-                    #Winning
-                    if received[0] == OPERATION.RESULT:
-                        print "Congratulations! You have won!"
-                        game = False
+                #Game in progress
+                if (action == OPERATION.TRIES or action == OPERATION.SEND_ID_TRIES) and answer > 0:
+                    if action == OPERATION.SEND_ID_TRIES:
+                        client_token = received[2]
+                    print "Tries left: " + str(answer)
+                    error = False
+                    number = 16
+                    while number <0 or number > 15:
+                        if error:
+                            number = input ("Wrong number! Chose from 0 to 15: ")
+                        else:
+                            number = input('Try to guess the number. Pick one from 0 to 15:')
+                            if number <0 or number > 15 :
+                                error = True
 
-                    #Losing
-                    elif received[0] == OPERATION.TRIES and received[1] == 0:
-                        print "Game over! You used all of your tries!"
-                        game = False
-
-                    #Game in progress
-                    else:
-                        error = False
-                        number = 16
-                        while number <0 or number > 15:
-                            if error:
-                                number = input ("Wrong number! Chose from 0 to 15: ")
-                            else:
-                                number = input('Try to guess the number. Pick one from 0 to 15:')
-                                if number <0 or number > 15 :
-                                    error = True
-
-                        #Sending pick
-                        message = self.pack_message(OPERATION.GUESS, number, ID)
-                        sock.sendall(message)
+                    #Sending pick
+                    print "ID: "+ str(client_token)
+                    message = self.pack_message(OPERATION.GUESS, number, client_token)
+                    sock.sendall(message)
 
                     #Receiving picking result
-                    data = sock.recv(12)
-                    received = self.unpack_message(data)
+                    #data = sock.recv(12)
+                    #received = self.unpack_message(data)
                     #print "Tries left: " + str(received)
-                    print "Tries left: " + str(received[2])
+                    #print "Tries left: " + str(answer)
 
-                break
+                #break
 
             #Look for the response
             # amount_received = 0
