@@ -85,7 +85,7 @@ class Client():
                 if action == OPERATION.SEND_ID:
                     client_token = token
                     TRIES = answer
-                    print('send' + str(received))
+                    #print('send' + str(received))
                     print "Waiting for second player to join and input number of tries!"
 
                     # time.sleep(10)
@@ -103,7 +103,7 @@ class Client():
                         sock.sendall(message)
                         data  = sock.recv(12)
                         received = self.unpack_message(data)
-                        print "Tries log: " + str(received)
+                        #print "Tries log: " + str(received)
                         action = received[0]
                         answer = received[1]
                         if action == OPERATION.TRIES and answer !=0:
@@ -134,26 +134,11 @@ class Client():
                                 error = True
 
                     #Sending pick
-                    print "ID: "+ str(client_token)
+                    #print "ID: "+ str(client_token)
                     message = self.pack_message(OPERATION.GUESS, number, client_token)
                     sock.sendall(message)
 
-                    #Receiving picking result
-                    #data = sock.recv(12)
-                    #received = self.unpack_message(data)
-                    #print "Tries left: " + str(received)
-                    #print "Tries left: " + str(answer)
-
                 #break
-
-            #Look for the response
-            # amount_received = 0
-            # amount_expected = len(message)
-            #
-            # while amount_received < amount_expected:
-            #     data = sock.recv(12)
-            #     amount_received += len(data)
-            #     print >> sys.stderr, 'received "%s"' % binascii.hexlify(data)
 
         finally:
             print >> sys.stderr, 'closing socket'
