@@ -1,5 +1,4 @@
 # Docs: https://pymotw.com/2/socket/tcp.html
-from bitset import Bitset
 from server import Server
 from client import Client
 import socket
