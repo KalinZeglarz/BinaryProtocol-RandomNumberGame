@@ -73,7 +73,7 @@ class Server():
                         for x in clients:
                             while token == x[0]:
                                 token = random.randint(1, 7)
-                        clients += [[token, answer]]
+                        clients += [[token, answer, False]]
 
                         print 'ID:' + str(token) + ' GRANTED FOR ' + str(client_address)
 
@@ -124,7 +124,7 @@ class Server():
                             if client[0] == token:
                                 if answer == secret_number:
                                     client[2] = True
-                                    message = self.pack_message(OPERATION.RESULT, 0, token)
+                                    message = self.pack_message(OPERATION.RESULT, 1, token)
                                     connection.sendall(message)
                                     print "RESULT send as it is GOOD answer to " + str(client_address)
                                 else:
