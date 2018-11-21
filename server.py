@@ -10,9 +10,9 @@ from functions import *
 from operation import OPERATION
 
 
-class Server():
-    def __init__(self):
-        pass
+class Server:
+    def __init__(self, addr):
+        self.addr = addr
         print("Initialize Server Program!")
 
     # Packing Frame data to Binary
@@ -149,7 +149,7 @@ class Server():
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         # Bind the socket to the port
-        server_address = ('localhost', 10000)
+        server_address = (self.addr, 10000)
         print >> sys.stderr, 'Starting up on %s port %s' % server_address
         sock.bind(server_address)
 
