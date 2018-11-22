@@ -16,3 +16,7 @@ def binarytoint(b):
         w = w*2+x
     return w
 
+def boolList2BinString(lst):
+    return '0b' + ''.join(['1' if x else '0' for x in lst])
+
+

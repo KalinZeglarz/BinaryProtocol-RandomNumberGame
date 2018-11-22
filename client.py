@@ -2,6 +2,10 @@ import struct
 import socket
 import sys
 import time
+from bitstring import BitArray, ConstBitArray, ConstBitStream
+import itertools
+import bitarray as ba
+import numpy as np
 import binascii
 from functions import *
 from operation import OPERATION
@@ -21,24 +25,32 @@ class Client:
         return [x == '1' for x in bin_string[::-1]]
 
     # Packing Frame data to Binary
-    def pack_message(self,OP,AN,ID):
+    def pack_message(self, OP, AN, ID):
         operation = OPERATION(OP)
 
-        packer = struct.Struct('5? 4? 3?')
-        message = intTOboolArr(operation.value, '05b') + intTOboolArr(AN, '04b') + intTOboolArr(ID, '03b')
-        packed_data = packer.pack(*message)
+        #Pakowanie do tablicy bool'i
+        message = intTOboolArr(operation.value, '05b') + intTOboolArr(AN, '04b') + intTOboolArr(ID,'03b') + intTOboolArr(15, '04b')
 
-        return packed_data
+        MESSAGE = boolList2BinString(message)
+        bitstring = BitArray(MESSAGE)
+        #print(str(bitstring))
+        return bitstring.tobytes()
 
-    #For unpacking massages from Binary to Frame structure
+    # For unpacking massages from Binary to Frame structure
     def unpack_message(self, data):
-        unpacker = struct.Struct('5? 4? 3?')
-        unpacked_data = unpacker.unpack(data)
+        recvdata = bin(int(binascii.hexlify(data), 16))
+        #print recvdata
+        unpacked_data = recvdata[2:].zfill(16)
+        #print recvdata
+        unpacked_data = ba.bitarray(unpacked_data)
+        unpacked_data = unpacked_data.tolist()
+
+        #print unpacked_data
+
         OP = OPERATION(boolArrTOint(unpacked_data[:5]))
         AN = boolArrTOint(unpacked_data[5:9])
-        ID = boolArrTOint(unpacked_data[9:])
-        return [OP,AN,ID]
-
+        ID = boolArrTOint(unpacked_data[9:12])
+        return [OP, AN, ID]
 
     def start(self):
         print "Client is starting!"
@@ -74,7 +86,7 @@ class Client:
 
             while True:
                 #Receive response with ID OR ID&TRIES
-                data = sock.recv(12)
+                data = sock.recv(2)
                 received = self.unpack_message(data)
                 #print(received)
 
@@ -91,7 +103,7 @@ class Client:
                     # time.sleep(10)
                     # message = self.pack_message(OPERATION.TRIES, 0, ID)
                     # sock.sendall(message)
-                    # data  = sock.recv(12)
+                    # data  = sock.recv(2)
                     # if len(data) == 12:
                     #     received = self.unpack_message(data)
                         #if received[0] == OPERATION.TRIES: #and received[1] !=0:
@@ -101,7 +113,7 @@ class Client:
                         time.sleep(2)
                         message = self.pack_message(OPERATION.TRIES, 1, client_token) #TRIES z AN ustawionym na 1 pyta o to czy drugi gracz wpisal juz swoja liczbe do wylosowania
                         sock.sendall(message)
-                        data  = sock.recv(12)
+                        data  = sock.recv(2)
                         received = self.unpack_message(data)
                         #print "Tries log: " + str(received)
                         action = received[0]

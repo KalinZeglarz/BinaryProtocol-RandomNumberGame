@@ -1,8 +1,12 @@
+import binascii
 import struct
 import random
 import socket
 import sys
+from bitstring import BitArray, ConstBitArray, ConstBitStream
 #import binascii
+import numpy as np
+import bitarray as ba
 import thread
 import time
 
@@ -16,23 +20,32 @@ class Server:
         print("Initialize Server Program!")
 
     # Packing Frame data to Binary
-    def pack_message(self,OP,AN,ID):
+    def pack_message(self, OP, AN, ID):
         operation = OPERATION(OP)
 
-        packer = struct.Struct('5? 4? 3?')
-        message = intTOboolArr(operation.value, '05b') + intTOboolArr(AN, '04b') + intTOboolArr(ID, '03b')
-        packed_data = packer.pack(*message)
+        #Pakowanie do tablicy bool'i
+        message = intTOboolArr(operation.value, '05b') + intTOboolArr(AN, '04b') + intTOboolArr(ID,'03b') + intTOboolArr(15, '04b')
 
-        return packed_data
+        MESSAGE = boolList2BinString(message)
+        bitstring = BitArray(MESSAGE)
+        #print(str(bitstring))
+        return bitstring.tobytes()
 
-    #For unpacking massages from Binary to Frame structure
+    # For unpacking massages from Binary to Frame structure
     def unpack_message(self, data):
-        unpacker = struct.Struct('5? 4? 3?')
-        unpacked_data = unpacker.unpack(data)
+        recvdata = bin(int(binascii.hexlify(data), 16))
+        #print recvdata
+        unpacked_data = recvdata[2:].zfill(16)
+        #print recvdata
+        unpacked_data = ba.bitarray(unpacked_data)
+        unpacked_data = unpacked_data.tolist()
+
+        #print unpacked_data
+
         OP = OPERATION(boolArrTOint(unpacked_data[:5]))
         AN = boolArrTOint(unpacked_data[5:9])
-        ID = boolArrTOint(unpacked_data[9:])
-        return [OP,AN,ID]
+        ID = boolArrTOint(unpacked_data[9:12])
+        return [OP, AN, ID]
 
     def newClient(self, connection, client_address, port, clients, secret_number, tries, client_nr):
         print "New Client: thread created"
@@ -42,7 +55,7 @@ class Server:
 
             # Receive the data in small chunks and retransmit it
             while True:
-                data = connection.recv(12)
+                data = connection.recv(2)
                 # unpacked_data = unpacker.unpack(data)
                 #print "Data len:",len(data)
 
