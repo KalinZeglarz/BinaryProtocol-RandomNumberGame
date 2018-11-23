@@ -72,12 +72,12 @@ class Client:
             #Packing Data to Binary
             error = False
             number = 16
-            while number < 0 or number > 15:
+            while number < 0 or number > 15 or number % 2 == 0 or type(number) is not int:
                 if error:
                     number = input("Wrong number! Chose form 0 to 15: ")
                 else:
                     number = input('Pick one number from 0 to 15 as the number of tries:')
-                    if number < 0 or number > 15:
+                    if number < 0 or number > 15 or number % 2 == 0 or type(number) is not int:
                         error = True
 
             message = self.pack_message(OPERATION.GET_ID_TRIES, number, client_token)
@@ -137,12 +137,12 @@ class Client:
                     print "Tries left: " + str(answer)
                     error = False
                     number = 16
-                    while number <0 or number > 15:
+                    while number < 0 or number > 15 or number % 2 == 0 or type(number) is not int:
                         if error:
                             number = input ("Wrong number! Chose from 0 to 15: ")
                         else:
                             number = input('Try to guess the number. Pick one from 0 to 15:')
-                            if number <0 or number > 15 :
+                            if number < 0 or number > 15 or number % 2 == 0 or type(number) is not int:
                                 error = True
 
                     #Sending pick
