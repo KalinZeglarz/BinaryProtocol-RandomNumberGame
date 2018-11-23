@@ -162,7 +162,7 @@ class Server:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         # Bind the socket to the port
-        server_address = (self.addr, 10000)
+        server_address = (self.addr, 8000)
         print >> sys.stderr, 'Starting up on %s port %s' % server_address
         sock.bind(server_address)
 
