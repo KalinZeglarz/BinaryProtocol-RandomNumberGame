@@ -29,7 +29,7 @@ class Client:
         operation = OPERATION(OP)
 
         #Pakowanie do tablicy bool'i
-        message = intTOboolArr(operation.value, '05b') + intTOboolArr(AN, '04b') + intTOboolArr(ID,'03b') + intTOboolArr(15, '04b')
+        message = intTOboolArr(operation.value, '05b') + intTOboolArr(AN, '04b') + intTOboolArr(ID,'03b') + intTOboolArr(0, '04b')
 
         MESSAGE = boolList2BinString(message)
         bitstring = BitArray(MESSAGE)
