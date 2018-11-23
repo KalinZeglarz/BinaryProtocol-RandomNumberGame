@@ -29,7 +29,7 @@ parser.add_argument("-S","--server", action="store_true", default=False, help="w
 parser.add_argument("-C", "--client", action="store_true", default=False, help="working as client")
 args = parser.parse_args()
 
-print str(args.addr) + str(args.client) + str(args.server)
+#print str(args.addr) + str(args.client) + str(args.server)
 try:
     if args.client and args.server:
         raise Exception("Bad args: Client and server cannot be combined!")
