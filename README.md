@@ -28,7 +28,7 @@ OPERATION TYPE  |   ANSWER  |   ID token   |  Complement bits
 :16 bits per segment
 </pre>
 
-OPERATION TYPES (OPERTION FLAG - BINARY NUMBER AS DECIMAL - DESCRIPTION):
+###OPERATION TYPES (OPERTION FLAG - BINARY NUMBER AS DECIMAL - DESCRIPTION):
 <ul>
     <li>GET_ID - 1 - Flag used to get ID token from server,</li>
     <li>SEND_ID - 2 - Flag used by server to send ID token to client,</li>
@@ -37,4 +37,4 @@ OPERATION TYPES (OPERTION FLAG - BINARY NUMBER AS DECIMAL - DESCRIPTION):
     <li>RESULT - 16 - Used to inform client about winning the game,</li>
     <li>GET_ID_TRIES - 5 - Flag combo used by client to get form server ID token and tries in one single query,</li>
     <li>SEND_ID_TRIES - 6 - Flag combo used by server to inform client about tries left and to send ID token.</li>
-<li>
+</ul>
