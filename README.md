@@ -1,7 +1,7 @@
 # BinaryProtocol-RandomNumberGame
 
 ## How to run
-Note: Application default needs Python2.7 to work properly as it was testet at this version
+Note: Application default needs Python2.7 to work properly as it was tested at this version
 
 To run as server: `python main.py -a server_ip -S` <br>
 To run as client: `python main.py -a server_ip -S`
